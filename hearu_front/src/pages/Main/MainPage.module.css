@@ -1,0 +1,473 @@
+.container{
+  height: 100vh; /* Full viewport height */
+  background:
+   radial-gradient(circle at 15% 10%, rgba(255, 215, 120, 0.7), transparent 55%),
+   radial-gradient(circle at 85% 5%, rgba(255, 170, 120, 0.6), transparent 55%),
+   radial-gradient(circle at 85% 90%, rgba(245, 160, 185, 0.55), transparent 60%),
+   linear-gradient(to bottom, #ffcbb0 0%, #fff0eb 100%);
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.topBar {
+  width: 100%;
+  height: 3.6rem;
+  background: rgba(249, 249, 249, 0.3);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  position: static; 
+  padding: 1rem;
+
+  height: 35px;
+  z-index: 10; /* Ensure logo is above other elements */
+}
+
+.emailContainer {
+  height: 2rem;
+  margin-left: auto;
+  margin-right: 1rem;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  background-color:rgba(249, 249, 249, 0.4);
+
+  border-radius: 0.5rem;
+
+  padding: 0rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  cursor: pointer;
+
+  font-size: 1.1rem;
+  text-align: center;
+  font-family: 'Georgia', sans-serif;
+  color: #ff7e69;
+  padding-right: 1rem;
+  
+  border: 1px solid #ff7e69;
+}
+
+.avatarIcon {
+  width: 24px;
+  height: 24px;
+  padding: 0.5rem;
+}
+
+.emailContainer:hover {
+  background-color: #ff7d6963;
+  color: white;
+
+}
+
+.mainBox{
+  height: calc(100vh - 3.6rem);
+  width: 70vw;
+
+  position: absolute;
+  top: 4.1rem;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: rgba(255, 255, 255, 0.5);   /* Adjust later */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.buttonBar{
+  height: 3rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.fileNameText {
+  left:0%;
+  margin-left: 2rem;
+  font-size: 1.1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #ff7e69;
+
+  cursor: pointer;
+}
+
+.fileNameText:hover{
+  background-color: #ff7d6930;
+}
+
+
+.analyzeButton, .uploadButton, .exportButton{
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+
+  max-width:7em;
+
+  background-color: #ff7d691b;
+  border: 1px solid #ff7e69;
+  border-radius: 0.5rem;
+
+  font-size: 1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #141212;
+
+  cursor: pointer;
+}
+
+.privacy{
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  text-align: right;
+  padding-right: 1.5rem;
+  font-size: 1.1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #ff7e69;
+  cursor: pointer;
+}
+
+.privacy:hover{
+  text-decoration: underline;
+  color: #141212;
+}
+
+.analyzeButton:hover, .uploadButton:hover, .exportButton:hover{
+  background-color: #ff7d6980;
+  color: white;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(to right, #ffe4b3, #ffc0a0, #ff9e9e);
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -40%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.box1{
+  position: relative;
+  height: 100%;
+  padding-bottom: 2.5rem;
+  
+  display: grid;
+  grid-template-areas:
+  "transcript analysis analysis"
+  "transcript ai ai";
+  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+
+  overflow-y: auto; 
+  max-height: calc(100vh - 8rem); 
+}
+
+.transcriptCard {
+  grid-area: transcript;
+
+  height: 100%;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.35);
+
+  display: flex;
+  flex-direction: column;
+
+  cursor: pointer;
+}
+
+.title {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0.5rem 1rem;
+
+  background-color: #ff7d691b;
+  border-radius: 0.5rem 0.5rem 0 0;
+
+  text-align: center;
+  font-size: 1.2rem;
+  font-family: 'Georgia', sans-serif;
+  font-weight: 500;
+  color: #ff7e69;
+}
+
+.transcriptScroll, .aiScroll {
+  margin-top: 0;
+  margin-top: 0;
+  margin-left: 2rem;
+  margin-right: 0.5rem;
+
+  font-size: 1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #141212;
+
+  max-height: auto;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width:thin;
+  scrollbar-color: #faa5a5aa #ffffff80;
+  
+}
+
+
+
+.analysisCard {
+  grid-area: analysis;
+
+  height: 50;
+  margin-right: 1rem;
+  margin-top: 1rem;
+
+
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.35);
+
+  display: flex;
+  flex-direction: column;
+
+  cursor: pointer;
+}
+
+.analysisContainer{
+
+  margin: 0.5rem;
+  margin-top: 0.8rem;
+
+  border-radius: 0.5rem;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.analysisContainer1, .analysisContainer2, .analysisContainer3{
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #faa5a5aa #ffffff80;
+
+  height: auto;
+  margin-top: 0rem;
+  margin-bottom: 0.4rem;
+  margin-left:0.4rem;
+  margin-right:0.4rem;
+  padding:0.5rem;
+
+  border-radius: 0.5rem;
+  background-color: #faa5a52b;
+
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  cursor: pointer;
+}
+
+.analysisContainer1:hover, .analysisContainer2:hover, .analysisContainer3:hover{
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.analysisContainer1{
+  width: 10rem;
+}
+
+.analysisContainer2{
+  width: 12rem;
+}
+
+.analysisContainer3{
+  width: 10rem;
+}
+
+.analysisModule{
+  margin: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.analysisContent{
+  padding: 0.3rem;
+  padding-left: 0.5rem;
+  margin-top: 0rem;
+
+  height: auto;
+
+  text-align: left;
+  font-size: 0.8rem;
+
+  border-radius: 0.5rem;
+  background-color: #ff7d6941;
+
+  font-family: 'Georgia', sans-serif;
+  color: #141212;
+
+  cursor: pointer;
+  
+}
+
+.analysisContent:hover{
+  background-color: #ff7d6980;
+  color: white;
+}
+
+
+.aiCard {
+  grid-area: ai;
+
+  height: auto;
+  margin-right: 1rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.35);
+
+  display: flex;
+  flex-direction: column;
+
+  cursor: pointer;
+}
+
+.transcriptCard:hover, .analysisCard:hover, .aiCard:hover {
+  border: 1.5px solid #ffb8a1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modalContent {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-top: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 90%; 
+  max-width: 400px;
+  font-size: 1.1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #141212;
+  line-height: 1.4;
+}
+
+.modalContent2{
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  width: 90%; 
+  max-width: 400px;
+  font-size: 1.1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #141212;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.modalButtons button {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  max-width: 8rem;
+
+  font-size: 1rem;
+  border: 1px solid #ff7e69;
+  border-radius: 0.5rem;
+  background-color: #ff7d691b;
+  transition: all 0.3s ease;
+
+  font-size: 1.1rem;
+  font-family: 'Georgia', sans-serif;
+  color: #141212;
+
+  cursor: pointer;
+}
+
+.modalButtons button:hover {
+  background-color: #ff7d6963;
+  color: white;
+}
+
+.emotionTag {
+  display: inline-block;
+  margin: 0.2rem;
+  padding: 0.3rem 0.6rem;
+  background-color: #ffe0e0;
+  color: #ff7e69;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-family: 'Georgia', sans-serif;
+  border: 1px solid #ffb4a2;
+}

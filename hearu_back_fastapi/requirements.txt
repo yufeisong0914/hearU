@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-multipart
+pydub
+speechrecognition
+textblob
+matplotlib
+wordcloud
+pymongo
+python-dotenv
