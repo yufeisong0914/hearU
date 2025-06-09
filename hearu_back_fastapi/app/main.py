@@ -1,20 +1,26 @@
-# app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import analyze, result
-from app.routes.analyze import router as analyze_router
+from fastapi import FastAPI, UploadFile, File, Form
+import os
+from app.services import analysis
+
 
 app = FastAPI()
 
-# CORS 设置：允许前端访问
+# Allow frontend origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # 前端 Vite 端口
+    allow_origins=["http://localhost:5173"],  # or ["*"] for all origins (not recommended for production)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 路由注册
-app.include_router(analyze.router)
-app.include_router(result.router)
+@app.get("/")
+def read_root():
+    return {"message": "hearU backend is running!"}
+
+@app.post("/analyze")
+async def analyze(email: str = Form(...), file: UploadFile = File(...)):
+    result = await analysis.analyze_audio(file, email)
+    return result

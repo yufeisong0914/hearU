@@ -8,15 +8,51 @@ from collections import Counter
 from wordcloud import WordCloud, STOPWORDS
 from textblob import TextBlob
 import speech_recognition as sr
+import json
+import requests
 # ai
 from transformers import pipeline
 
-# initialize models
-dialogue_model = pipeline("text2text-generation", model="google/flan-t5-large")
-support_model = pipeline("text2text-generation", model="google/flan-t5-large")
-emotion_model = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=5)
+# Gemini API configuration
+GEMINI_API_KEY = "AIzaSyC8cubLmcGsqqXikEaNv8OBLX77djNQAGA"
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
 
 recognizer = sr.Recognizer()
+
+def call_gemini_api(prompt, max_tokens=150):
+    """Make a request to Gemini API"""
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "contents": [{
+            "parts": [{
+                "text": prompt
+            }]
+        }],
+        "generationConfig": {
+            "maxOutputTokens": max_tokens,
+            "temperature": 0.7
+        }
+    }
+    
+    try:
+        response = requests.post(GEMINI_API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        
+        if 'candidates' in result and len(result['candidates']) > 0:
+            return result['candidates'][0]['content']['parts'][0]['text']
+        else:
+            return "Unable to generate response"
+            
+    except requests.exceptions.RequestException as e:
+        print(f"API request failed: {e}")
+        return f"Error: {str(e)}"
+    except KeyError as e:
+        print(f"Unexpected response format: {e}")
+        return "Error: Unexpected response format"
 
 def lexical_diversity(text):
     words = text.lower().split()
@@ -34,39 +70,77 @@ def sentence_complexity(text):
     feedback = "✅ Balanced complexity." if avg_len > 12 and conj_count >= len(sentences) else "⚠️ Simple or flat sentence structure."
     return avg_len, conj_count, feedback
 
-# def generate_summary(text):
-#     short_text = text[:1000]
-#     prompt = f"Summarize the speaker's current problem and situation, explain in logic, what happened and how they are feeling. Show that you understand the speaker, and they are seen, heard and recognized: {short_text}"
-#     response = dialogue_model(prompt, max_length=150, do_sample=True)[0]["generated_text"]
-#     return response
+def generate_summary(text):
+    """Generate summary using Gemini API"""
+    short_text = text[:1000]  # Limit text length for API efficiency
+    prompt = f"""Summarize the speaker's current problem and situation. Explain logically what happened and how they are feeling. Show that you understand the speaker, and they are seen, heard and recognized.
 
-# def generate_support(text):
-#     short_text = text[:1000]
-#     prompt = f"Give an caring, empathetic and practical support to guide the listener or the speaker to response to this person's situation: {short_text}"
-#     result = support_model(prompt, max_length=100, do_sample=True)[0]['generated_text']
-#     return result
+Text to analyze: "{short_text}"
 
-def get_emotion_modeling(text):
-    emotions = emotion_model(text)
-    top_emotions = [e['label'].lower() for e in emotions[0]]
+Provide a compassionate and understanding summary in 2-3 sentences."""
+    
+    return call_gemini_api(prompt, max_tokens=150)
 
-# def get_ai_analysis(text):
-#     summary = generate_summary(text)
-#     support = generate_support(text)
-#     return {
-#         "summary": summary,
-#         "supportive_message": support
-#     }
+def generate_support(text):
+    """Generate supportive response using Gemini API"""
+    short_text = text[:1000]  # Limit text length for API efficiency
+    prompt = f"""Give caring, empathetic and practical support to guide someone responding to this person's situation. Be supportive and constructive.
 
+Text to analyze: "{short_text}"
+
+Provide helpful and empathetic guidance in 2-3 sentences."""
+    
+    return call_gemini_api(prompt, max_tokens=100)
+
+def get_emotion_analysis(text):
+    """Analyze emotions using Gemini API"""
+    prompt = f"""Analyze the emotions expressed in this text. Identify the top 3-5 emotions present and rate their intensity.
+
+Text: "{text[:500]}"
+
+Respond in JSON format like this:
+{{"emotions": [{{"emotion": "sadness", "intensity": "high"}}, {{"emotion": "frustration", "intensity": "medium"}}]}}"""
+    
+    response = call_gemini_api(prompt, max_tokens=100)
+    
+    try:
+        # Try to parse JSON response
+        emotion_data = json.loads(response)
+        return [e['emotion'].lower() for e in emotion_data.get('emotions', [])]
+    except:
+        # Fallback: extract emotions from text response
+        common_emotions = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust', 'neutral']
+        detected_emotions = []
+        response_lower = response.lower()
+        
+        for emotion in common_emotions:
+            if emotion in response_lower:
+                detected_emotions.append(emotion)
+        
+        return detected_emotions[:3] if detected_emotions else ['neutral']
+    
+def get_ai_analysis(text):
+    """Get comprehensive AI analysis"""
+    try:
+        summary = generate_summary(text)
+        support = generate_support(text)
+        return {
+            "summary": summary,
+            "supportive_message": support
+        }
+    except Exception as e:
+        return {
+            "summary": f"⚠️ Summary generation failed: {str(e)}",
+            "supportive_message": f"⚠️ Support generation failed: {str(e)}"
+        }
+      
 
 async def analyze_audio(file, email):
-    filename = f"{uuid.uuid4()}.wav"
-    file_path = os.path.join("uploads", filename)
-    os.makedirs("uploads", exist_ok=True)
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+    temp_path = f"/tmp/{file.filename}"
+    with open(temp_path, "wb") as f_out:
+        f_out.write(await file.read())
 
-    audio = AudioSegment.from_file(file_path)
+    audio = AudioSegment.from_file(temp_path)
     audio = audio.set_frame_rate(16000)
     audio.export("temp.wav", format="wav")
 
@@ -104,16 +178,19 @@ async def analyze_audio(file, email):
     buf = io.BytesIO()
     wc.to_image().save(buf, format='PNG')
     wordcloud_base64 = base64.b64encode(buf.getvalue()).decode()
+    
+    # emotions using Gemini
+    emotion_analysis = get_emotion_analysis(text) if text and "Could not understand" not in text else ['neutral']
 
-    # emotions
-    emotion_modeling = get_emotion_modeling(text)
-
-    # ai
-    # ai_feedback = {}
-    # try:
-    #     ai_feedback = get_ai_analysis(text)
-    # except Exception as e:
-    #     ai_feedback = {"error": f"⚠️ AI analysis failed: {str(e)}"}
+    # AI analysis using Gemini
+    ai_feedback = {}
+    if text and "Could not understand" not in text:
+        ai_feedback = get_ai_analysis(text)
+    else:
+        ai_feedback = {
+            "summary": "Unable to analyze due to transcription issues",
+            "supportive_message": "Please try recording again with clearer audio"
+        }
 
 
     result = {
@@ -137,13 +214,13 @@ async def analyze_audio(file, email):
         "polarity": round(polarity, 2),
         "subjectivity": round(subjectivity, 2),
         "disfluencies": disfluency_count,
-        "emotions": emotion_modeling,
+        "emotions": emotion_analysis,
         
-        # "ai_feedback": ai_feedback
+        "ai_feedback": ai_feedback
     }
 
     # clear the temporary files
-    os.remove(file_path)
+    os.remove(temp_path)
     os.remove("temp.wav")
 
     return result

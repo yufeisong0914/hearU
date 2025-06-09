@@ -8,3 +8,4 @@ matplotlib
 wordcloud
 pymongo
 python-dotenv
+requests

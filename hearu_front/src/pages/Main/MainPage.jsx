@@ -229,11 +229,11 @@ const handleExport = () => {
                 ) : (
                   <div className={styles.aiContent}>
                     <p><b>Summary:</b> {data.ai_feedback.summary}</p>
-                    <p><b>Detected Emotions:</b> 
+                    {/* <p><b>Detected Emotions:</b> 
                       {data.ai_feedback.detected_emotions?.map((emotion, index) => (
                         <span key={index} className={styles.emotionTag}>{emotion}</span>
                       ))}
-                    </p>
+                    </p> */}
                     <p><b>Supportive Message:</b><br/> {data.ai_feedback.supportive_message}</p>
                   </div>
                 )
