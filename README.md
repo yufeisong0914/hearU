@@ -1,24 +1,20 @@
-hearU 🎧🫧  
-“Not just what you say — but how you say it.”
-
-hearU is a voice-based emotional insight tool that analyzes both the **content** and **expression** of your speech. It generates empathetic feedback and language-based metrics — helping users understand how they sound, not just what they say.
+hearU is a voice-based emotional insight tool that analyzes both the content and expression of your speech. It generates empathetic feedback and language-based metrics — helping users understand how they sound, not just what they say.
 
 ---
 
-🌟 Features
+Features
 
-🎙️ Audio Upload: Record or upload your voice directly from the browser
-🧠 Multi-layered Analysis:
+Audio Upload: Record or upload your voice directly from the browser
+Multi-layered Analysis:
   - Basic: total words, sentence length, speech rate
   - Expression: lexical diversity, repetition, sentence complexity
   - Emotion: polarity, subjectivity, disfluency, modeled emotion
-✨ AI Feedback: Gemini-powered summaries and supportive messages
-🔐 Privacy First: No user data is stored — all processing is done in memory
-📤 Exportable Results: Download analysis as a JSON file
+AI Feedback: Gemini-powered summaries and supportive messages
+Exportable Results: Download analysis as a JSON file
 
 ---
 
-🧱 Tech Stack
+Tech Stack
 
 Frontend
 - React + Vite
@@ -29,11 +25,11 @@ Backend
 - pydub, SpeechRecognition, TextBlob, WordCloud
 - Google Gemini API for emotion modeling & summaries
 
-⚠️ No database is used. All processing happens in-memory.
+No database is used. All processing happens in-memory.
 
 ---
 
-🚀 Getting Started (Local Setup)
+Getting Started (Local Setup)
 
 1. Clone the repository
 git clone https://github.com/yufeisong0914/hearU.git
@@ -51,7 +47,7 @@ npm run dev
 
 ---
 
-🔍 Project Structure
+Project Structure
 
 hearu/
 ├── hearu_front/       # React + Vite frontend
@@ -59,13 +55,13 @@ hearu/
 
 ---
 
-📌 Design Philosophy
+Design Philosophy
 
 - Human-centered design
 - Empathy over classification
 
 ---
 
-🧠 Acknowledgments
+Acknowledgments
 
 Google Gemini 1.5 API for LLM-powered summarization
